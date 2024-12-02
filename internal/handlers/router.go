@@ -16,18 +16,18 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
-	router.GET("/dummyLogin", h.dummyLogin)
-	router.POST("/login", h.login)
+	router.GET("/dummyLogin", h.dummyLogin) //+
+	router.POST("/login", h.login) //+
 	router.POST("/register", h.register) //+
 
-	authOnly := router.Group("/")
+	authOnly := router.Group("/", h.UserIdentity)
 	{
 		authOnly.GET("/house/:id", h.createHouse)
 		authOnly.POST("/house/:id/subscribe", h.createHouse)
 		authOnly.POST("/flat/create", h.CreateFlat) //+
 	}
 
-	moderationsOnly := router.Group("/")
+	moderationsOnly := router.Group("/", h.ModeratorIdentity)
 	{
 		moderationsOnly.POST("/house/create", h.createHouse) //+
 		moderationsOnly.POST("/flat/update", h.createHouse)

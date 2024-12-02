@@ -20,6 +20,7 @@ type Auth interface {
 	generatePasswordHash(password string) string 
 	GenerateToken(userType string) (string, error)
 	Login(ctx context.Context, id, password string) (string, error) 
+	Parsetoken(accessToken string) (string, error)
 }
 
 type Service struct {

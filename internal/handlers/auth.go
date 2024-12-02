@@ -2,10 +2,15 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/BabyJhon/backend-trainee-assignment-2024/internal/entity"
 	"github.com/BabyJhon/backend-trainee-assignment-2024/internal/middleware"
 	"github.com/gin-gonic/gin"
+)
+
+const (
+	authoriationHeader = "Authorization"
 )
 
 func (h *Handler) register(c *gin.Context) {
@@ -16,12 +21,8 @@ func (h *Handler) register(c *gin.Context) {
 		return
 	}
 
-	isValid, err := middleware.IsRegisterInputValid(input)
-	if err!=nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if !isValid {
+	err := middleware.IsRegisterInputValid(input)
+	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -44,10 +45,14 @@ func (h *Handler) login(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 	}
 
-	//валидация
+	err := middleware.IsLoginInputValid(input.Id, input.Password)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
 
 	token, err := h.services.Login(c, input.Id, input.Password)
-	if err!=nil {
+	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -61,12 +66,8 @@ func (h *Handler) dummyLogin(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
 	userType := queryParams.Get("user_type")
 
-	isValid, err := middleware.IsDummyLoginInputValid(userType)
+	err := middleware.IsDummyLoginInputValid(userType)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if !isValid {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -80,4 +81,46 @@ func (h *Handler) dummyLogin(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"token": token,
 	})
+}
+
+func (h *Handler) ModeratorIdentity(c *gin.Context) {
+	header := c.GetHeader(authoriationHeader)
+	if header == "" {
+		newErrorResponse(c, http.StatusUnauthorized, "empty request header")
+	}
+
+	headerParts := strings.Split(header, " ")
+	if len(headerParts) != 2 {
+		newErrorResponse(c, http.StatusUnauthorized, "invalid header size")
+	}
+
+	userType, err := h.services.Auth.Parsetoken(headerParts[1])
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+	}
+
+	if userType != "moderator" {
+		newErrorResponse(c, http.StatusUnauthorized, "wrong user type")
+	}
+}
+
+func (h *Handler) UserIdentity(c *gin.Context) {
+	header := c.GetHeader(authoriationHeader)
+	if header == "" {
+		newErrorResponse(c, http.StatusUnauthorized, "empty request header")
+	}
+
+	headerParts := strings.Split(header, " ")
+	if len(headerParts) != 2 {
+		newErrorResponse(c, http.StatusUnauthorized, "invalid header size")
+	}
+
+	userType, err := h.services.Auth.Parsetoken(headerParts[1])
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+	}
+
+	if userType != "moderator" && userType != "client" {
+		newErrorResponse(c, http.StatusUnauthorized, "wrong user type")
+	}
 }

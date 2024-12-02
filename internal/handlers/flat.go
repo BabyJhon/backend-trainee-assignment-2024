@@ -16,8 +16,8 @@ func (h *Handler) CreateFlat(c *gin.Context) {
 		return
 	}
 
-	isValid, err := middleware.IsCreateFlatInputValid(inPut)
-	if !isValid {
+	err := middleware.IsCreateFlatInputValid(inPut)
+	if err!=nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}

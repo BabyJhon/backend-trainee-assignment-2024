@@ -16,8 +16,8 @@ func (h *Handler) createHouse(c *gin.Context) {
 		return
 	}
 
-	isValid, err := middleware.IsCreateHouseInputValid(inPut)
-	if !isValid {
+	err := middleware.IsCreateHouseInputValid(inPut)
+	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}

@@ -7,45 +7,33 @@ import (
 
 var validate *validator.Validate
 
-func IsCreateHouseInputValid(house entity.House) (bool, error) {
+func IsCreateHouseInputValid(house entity.House) (error) {
 	validate = validator.New()
-	if err := validate.Struct(house); err != nil {
-		return false, err
-	}
-	return true, nil
+	return validate.Struct(house)
 }
 
-func IsDummyLoginInputValid(userType string) (bool, error) {
+func IsDummyLoginInputValid(userType string) ( error) {
 	validate := validator.New()
-	if err := validate.Var(userType, "oneof=client moderator"); err != nil {
-		return false, err
-	}
-	return true, nil
+	return validate.Var(userType, "oneof=client moderator")
 }
 
-func IsRegisterInputValid(user entity.User) (bool, error) {
+func IsRegisterInputValid(user entity.User) (error) {
 	validate = validator.New()
-	if err := validate.Struct(user); err != nil {
-		return false, err
-	}
-	return true, nil
+	return validate.Struct(user)
 }
 
-func IsCreateFlatInputValid(flat entity.Flat) (bool, error) {
+func IsCreateFlatInputValid(flat entity.Flat) (error) {
 	validate = validator.New()
-	if err := validate.Struct(flat); err != nil {
-		return false, err
-	}
-	return true, nil
+	return validate.Struct(flat)
 }
 
-func IsLoginInputValid(id, password string) (bool, error) {
+func IsLoginInputValid(id, password string) (error) {
 	validate = validator.New()
-	if err := validate.Var(id, `"required,uuid"`); err != nil {
-		return false, err
+	if err := validate.Var(id, "required,uuid"); err != nil {
+		return err
 	}
-	if err := validate.Var(password, `"required,min=1"`); err != nil {
-		return false, err
+	if err := validate.Var(password, "required,min=1"); err != nil {
+		return err
 	}
-	return true, nil
+	return nil
 }
