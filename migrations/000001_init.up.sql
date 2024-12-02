@@ -12,6 +12,7 @@ CREATE TYPE moderation_status AS  ENUM('created', 'approved', 'declined', 'on mo
 CREATE TABLE flats (
     id int NOT NULL CHECK (id >= 1) ,
     house_id int NOT NULL CHECK (house_id >= 1),
+    UNIQUE (id, house_id),
     FOREIGN KEY (house_id) REFERENCES houses(id) ON DELETE CASCADE,
     price int NOT NULL CHECK (price >= 1),
     rooms int NOT NULL CHECK (rooms >= 1),

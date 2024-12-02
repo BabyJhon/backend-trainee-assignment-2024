@@ -38,3 +38,14 @@ func IsCreateFlatInputValid(flat entity.Flat) (bool, error) {
 	}
 	return true, nil
 }
+
+func IsLoginInputValid(id, password string) (bool, error) {
+	validate = validator.New()
+	if err := validate.Var(id, `"required,uuid"`); err != nil {
+		return false, err
+	}
+	if err := validate.Var(password, `"required,min=1"`); err != nil {
+		return false, err
+	}
+	return true, nil
+}

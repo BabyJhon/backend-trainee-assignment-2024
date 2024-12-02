@@ -21,16 +21,15 @@ func NewFlatRepo(db *pgxpool.Pool) *FlatRepo {
 }
 
 func (r *FlatRepo) CreateFlat(ctx context.Context, flat entity.Flat, updatedAt time.Time) (int, error) {
-	fmt.Println("hello from repository")
 	var id int
 	tx, err := r.db.Begin(ctx)
 	if err!=nil{
 		return 0, err
 	}
 
-	query := fmt.Sprintf("INSERT INTO %s (house_id, price, rooms, status) values ($1, $2, $3, $4) RETURNING id", postgres.FlatsTable)
+	query := fmt.Sprintf("INSERT INTO %s (id, house_id, price, rooms, status) values ($1, $2, $3, $4, $5) RETURNING id", postgres.FlatsTable)
 
-	row := tx.QueryRow(ctx, query, flat.HouseId, flat.Price, flat.Rooms, flat.Status)
+	row := tx.QueryRow(ctx, query, flat.Id, flat.HouseId, flat.Price, flat.Rooms, flat.Status)
 	if err := row.Scan(&id); err != nil {
 		tx.Rollback(ctx)
 		return 0, err

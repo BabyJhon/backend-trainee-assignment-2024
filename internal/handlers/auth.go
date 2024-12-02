@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) register(c *gin.Context) { //регистрация
+func (h *Handler) register(c *gin.Context) {
 	var input entity.User
 
 	if err := c.BindJSON(&input); err != nil {
@@ -19,6 +19,7 @@ func (h *Handler) register(c *gin.Context) { //регистрация
 	isValid, err := middleware.IsRegisterInputValid(input)
 	if err!=nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 	if !isValid {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -43,15 +44,17 @@ func (h *Handler) login(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 	}
 
-	// token, err := h.services.Authorization.GenerateToken(context.Background(), input.UserName, input.Password)
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
+	//валидация
 
-	// c.JSON(http.StatusOK, map[string]interface{}{
-	// 	"token": token,
-	// })
+	token, err := h.services.Login(c, input.Id, input.Password)
+	if err!=nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"token": token,
+	})
 }
 
 func (h *Handler) dummyLogin(c *gin.Context) {
@@ -59,8 +62,9 @@ func (h *Handler) dummyLogin(c *gin.Context) {
 	userType := queryParams.Get("user_type")
 
 	isValid, err := middleware.IsDummyLoginInputValid(userType)
-	if err!=nil {
+	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 	if !isValid {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())

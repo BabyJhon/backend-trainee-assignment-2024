@@ -5,7 +5,7 @@ import (
 )
 
 type House struct {
-	Id        int       `json:"id" db:"id"`
+	Id        int       `json:"id" validate:"uuid" db:"id"`
 	Address   string    `json:"address" validate:"required,min=1" db:"address"`
 	Year      int       `json:"year" validate:"required,gte=0" db:"year"`
 	Developer string    `json:"developer" validate:"omitempty,min=1" db:"developer"`

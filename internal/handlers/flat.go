@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/BabyJhon/backend-trainee-assignment-2024/internal/entity"
@@ -10,7 +9,6 @@ import (
 )
 
 func (h *Handler) CreateFlat(c *gin.Context) {
-	fmt.Println("hello from handlers")
 	var inPut entity.Flat
 
 	if err := c.BindJSON(&inPut); err != nil {
