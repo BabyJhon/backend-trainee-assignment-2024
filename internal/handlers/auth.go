@@ -104,7 +104,7 @@ func (h *Handler) ModeratorIdentity(c *gin.Context) {
 	}
 }
 
-func (h *Handler) UserIdentity(c *gin.Context) {
+func (h *Handler) ClientIdentity(c *gin.Context) {
 	header := c.GetHeader(authoriationHeader)
 	if header == "" {
 		newErrorResponse(c, http.StatusUnauthorized, "empty request header")
@@ -120,7 +120,11 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 	}
 
-	if userType != "moderator" && userType != "client" {
+	if  userType != "client" {
 		newErrorResponse(c, http.StatusUnauthorized, "wrong user type")
 	}
+}
+
+func (h *Handler) UserIdentity (c *gin.Context) {
+	
 }

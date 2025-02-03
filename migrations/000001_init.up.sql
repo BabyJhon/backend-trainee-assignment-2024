@@ -17,7 +17,7 @@ CREATE TABLE flats (
     price int NOT NULL CHECK (price >= 1),
     rooms int NOT NULL CHECK (rooms >= 1),
     status moderation_status NOT NULL
-);
+);  
 
 CREATE TYPE user_status as ENUM('client', 'moderator');
 
