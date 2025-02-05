@@ -30,3 +30,45 @@ func (r *HouseRepo) CreateHouse(ctx context.Context, house entity.House) (int, e
 
 	return id, nil
 }
+
+func (r *HouseRepo) GetAllFlats(ctx context.Context, houseId int) (*[]entity.Flat, error) {
+	var flats []entity.Flat
+	query := fmt.Sprintf("SELECT * FROM %s WHERE house_id = $1", postgres.FlatsTable)
+
+	rows, err := r.db.Query(ctx, query, houseId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var flat entity.Flat
+		if err := rows.Scan(&flat.Id, &flat.HouseId, &flat.Price, &flat.Rooms, &flat.Status); err != nil {
+			return nil, err
+		}
+		flats = append(flats, flat)
+	}
+
+	return &flats, nil
+}
+
+func (r *HouseRepo) GetApprovedFlats(ctx context.Context, houseId int) (*[]entity.Flat, error) {
+	var flats []entity.Flat
+	query := fmt.Sprintf("SELECT * FROM %s WHERE house_id = $1 AND status = 'approved'", postgres.FlatsTable)
+
+	rows, err := r.db.Query(ctx, query, houseId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var flat entity.Flat
+		if err := rows.Scan(&flat.Id, &flat.HouseId, &flat.Price, &flat.Rooms, &flat.Status); err != nil {
+			return nil, err
+		}
+		flats = append(flats, flat)
+	}
+
+	return &flats, nil
+}

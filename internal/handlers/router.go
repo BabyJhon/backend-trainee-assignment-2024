@@ -17,12 +17,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
 	router.GET("/dummyLogin", h.dummyLogin) //+
-	router.POST("/login", h.login) //+
-	router.POST("/register", h.register) //+
+	router.POST("/login", h.login)          //+
+	router.POST("/register", h.register)    //+
 
 	authOnly := router.Group("/", h.UserIdentity)
 	{
-		authOnly.GET("/house/:id", h.createHouse)
+		authOnly.GET("/house/:id", h.GetFlatsByHouse)//+-
 		authOnly.POST("/house/:id/subscribe", h.createHouse)
 		authOnly.POST("/flat/create", h.CreateFlat) //+
 	}
@@ -30,7 +30,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	moderationsOnly := router.Group("/", h.ModeratorIdentity)
 	{
 		moderationsOnly.POST("/house/create", h.createHouse) //+
-		moderationsOnly.POST("/flat/update", h.createHouse)
+		moderationsOnly.POST("/flat/update", h.UpdateFlat)
 	}
 
 	return router

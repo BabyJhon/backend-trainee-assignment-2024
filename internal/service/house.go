@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/BabyJhon/backend-trainee-assignment-2024/internal/entity"
@@ -28,4 +29,25 @@ func (s *HouseService) CreateHouse(ctx context.Context, house entity.House) (ent
 	}
 	house.Id = id
 	return house, nil
+}
+
+func (s *HouseService) GetFlatsByHouse(ctx context.Context, houseId int, userStatus string) (*[]entity.Flat, error) {
+	var flats *[]entity.Flat
+	var err error
+
+	if userStatus == "moderator" {
+		flats, err = s.repo.GetAllFlats(ctx, houseId)
+		if err != nil {
+			return nil, err
+		}
+	} else if userStatus == "client" {
+		flats, err = s.repo.GetApprovedFlats(ctx, houseId)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, errors.New("wrong user type")
+	}
+
+	return flats, nil
 }

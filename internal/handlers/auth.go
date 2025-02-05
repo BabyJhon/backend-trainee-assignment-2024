@@ -6,6 +6,7 @@ import (
 
 	"github.com/BabyJhon/backend-trainee-assignment-2024/internal/entity"
 	"github.com/BabyJhon/backend-trainee-assignment-2024/internal/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -102,9 +103,11 @@ func (h *Handler) ModeratorIdentity(c *gin.Context) {
 	if userType != "moderator" {
 		newErrorResponse(c, http.StatusUnauthorized, "wrong user type")
 	}
+
+	c.Set("userType", userType)
 }
 
-func (h *Handler) ClientIdentity(c *gin.Context) {
+func (h *Handler) UserIdentity(c *gin.Context) {
 	header := c.GetHeader(authoriationHeader)
 	if header == "" {
 		newErrorResponse(c, http.StatusUnauthorized, "empty request header")
@@ -120,11 +123,9 @@ func (h *Handler) ClientIdentity(c *gin.Context) {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 	}
 
-	if  userType != "client" {
+	if userType != "client" && userType != "moderator" {
 		newErrorResponse(c, http.StatusUnauthorized, "wrong user type")
 	}
-}
 
-func (h *Handler) UserIdentity (c *gin.Context) {
-	
+	c.Set("userType", userType)
 }

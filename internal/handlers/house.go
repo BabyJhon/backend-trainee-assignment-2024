@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/BabyJhon/backend-trainee-assignment-2024/internal/entity"
 	"github.com/BabyJhon/backend-trainee-assignment-2024/internal/middleware"
@@ -37,4 +38,32 @@ func (h *Handler) createHouse(c *gin.Context) {
 		"updated_at": house.UpdatedAt,
 	})
 
+}
+
+func (h *Handler) GetFlatsByHouse(c *gin.Context) {
+
+	houseId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	err = middleware.IsGetHousesInputValid(houseId)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	userType, exists := c.Get("userType")
+	if exists != true {
+		newErrorResponse(c, http.StatusUnauthorized, "user type not exists")
+		return
+	}
+
+	flats, err := h.services.House.GetFlatsByHouse(c, houseId, userType.(string))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+
+	c.JSON(http.StatusOK, &flats)
 }

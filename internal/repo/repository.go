@@ -10,10 +10,13 @@ import (
 
 type Flat interface {
 	CreateFlat(ctx context.Context, flat entity.Flat, updatedAt time.Time) (int, error)
+	UpdateFlat(ctx context.Context, flatId, houseId int, status string) (entity.Flat, error)
 }
 
 type House interface {
 	CreateHouse(ctx context.Context, house entity.House) (int, error)
+	GetApprovedFlats(ctx context.Context, houseId int) (*[]entity.Flat, error)
+	GetAllFlats(ctx context.Context, houseId int) (*[]entity.Flat, error)
 }
 
 type Auth interface {

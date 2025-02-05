@@ -27,3 +27,13 @@ func (s *FlatService) CreateFlat(ctx context.Context, flat entity.Flat) (entity.
 	flat.Id = id
 	return flat, nil
 }
+
+func (s *FlatService) UpdateFlat(ctx context.Context, flatId, houseId int, status string) (entity.Flat, error) {
+
+	flat, err := s.repo.UpdateFlat(ctx, flatId, houseId, status)
+	if err != nil {
+		return entity.Flat{}, err
+	}
+
+	return flat, nil
+}
