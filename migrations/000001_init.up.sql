@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS houses (
     updated_at TIMESTAMPTZ
 );
 
-CREATE TYPE IF NOT EXISTS moderation_status AS  ENUM('created', 'approved', 'declined', 'on moderation');
+CREATE TYPE moderation_status AS  ENUM('created', 'approved', 'declined', 'on moderation');
 
 CREATE TABLE IF NOT EXISTS flats (
     id int NOT NULL CHECK (id >= 1) ,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS flats (
     status moderation_status NOT NULL
 );  
 
-CREATE TYPE IF NOT EXISTS user_status as ENUM('client', 'moderator');
+CREATE TYPE user_status as ENUM('client', 'moderator');
 
 CREATE TABLE IF NOT EXISTS users (
     id uuid DEFAULT gen_random_uuid(), 
